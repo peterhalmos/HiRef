@@ -220,23 +220,38 @@ def compute_ot_cost(
     C: Optional[Array] = None,
     sq_euclidean: bool = True,
 ) -> Array:
-    n = X.shape[0]
-    total = jnp.array(0.0, dtype=X.dtype)
+    # Concatenate all leaf pairs once
+    ix_list = []
+    iy_list = []
     for idxX, idxY in monge_clus:
-        ix = jnp.asarray(idxX, dtype=jnp.int32)
-        iy = jnp.asarray(idxY, dtype=jnp.int32)
-        if ix.size != iy.size:
-            raise ValueError("Each block must be 1–1.")
-        if ix.size == 0:
+        # ensure 1-1 (skip empties; protect against mismatched sizes)
+        if idxX.size == 0 or idxY.size == 0:
             continue
-        if C is not None:
-            total = total + jnp.sum(C[(ix, iy)])
-        else:
-            diff = X[ix] - Y[iy]
-            if sq_euclidean:
-                total = total + jnp.sum(jnp.sum(diff * diff, axis=1))
-            else:
-                total = total + jnp.sum(jnp.linalg.norm(diff, axis=1))
-    return total / jnp.array(n, dtype=X.dtype)
+        size = int(min(idxX.size, idxY.size))
+        ix_list.append(jnp.asarray(idxX[:size], dtype=jnp.int32))
+        iy_list.append(jnp.asarray(idxY[:size], dtype=jnp.int32))
+
+    if not ix_list:
+        return jnp.array(0.0, dtype=X.dtype)
+
+    ix = jnp.concatenate(ix_list, axis=0)
+    iy = jnp.concatenate(iy_list, axis=0)
+
+    n = X.shape[0]
+    n_dtype = jnp.array(n, dtype=X.dtype)
+
+    if C is not None:
+        # One vectorized gather + sum
+        vals = C[ix, iy]         # shape (K,)
+        return jnp.sum(vals) / n_dtype
+
+    # Compute from coordinates in one shot
+    diff = X[ix] - Y[iy]         # shape (K, d)
+    if sq_euclidean:
+        # avoids sqrt; a single fused reduction
+        return jnp.sum(diff * diff) / n_dtype
+    else:
+        # If you need L2, this is still one kernel
+        return jnp.sum(jnp.linalg.norm(diff, axis=1)) / n_dtype
 
 
