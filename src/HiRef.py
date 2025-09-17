@@ -112,8 +112,8 @@ def lrot_lr(A: jnp.ndarray,
         GQ = gq - (1.0 / gamma_k) * jnp.log(jnp.clip(Qc, 1e-32))
         GR = gr - (1.0 / gamma_k) * jnp.log(jnp.clip(Rc, 1e-32))
         
-        Qn, fQ_n, gQ_n = log_sinkhorn_project(GQ, a, g, eps, max_iter=10, f=fQ_c, g=gQ_c)
-        Rn, fR_n, gR_n = log_sinkhorn_project(GR, b, g, eps, max_iter=10, f=fR_c, g=gR_c)
+        Qn, fQ_n, gQ_n = log_sinkhorn_project(GQ, a, g, eps, max_iter=15, f=fQ_c, g=gQ_c)
+        Rn, fR_n, gR_n = log_sinkhorn_project(GR, b, g, eps, max_iter=15, f=fR_c, g=gR_c)
 
         return (Qn, Rn, fQ_n, gQ_n, fR_n, gR_n), None
 
