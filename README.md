@@ -7,7 +7,7 @@ In the section below, we detail the usage of Hierarchical Refinement which compl
 - [HiRef_Demo.ipynb](HiRef_Demo.ipynb.ipynb)
 ```
 
-<img src="images/fig1-2.png" alt="Hierarchical Refinement Schematic" width="50%">
+<img src="images/fig1-2.png" alt="Hierarchical Refinement Schematic" width="50%"><img src="images/2Moons_8Gaussians.png" alt="2 Moons 8 Gaussians (Example)" width="50%">
 
 *Figure 1: Hierarchical Refinement algorithm: low-rank optimal transport is used to progressively refine partitions at the previous scale, with the coarsest scale partitions denoted* $X^{(1)}, Y^{(1)}$ *, and the finest scale partitions* $X^{(\kappa)}, Y^{(\kappa)}$ *corresponding to the individual points in the datasets.*
 
