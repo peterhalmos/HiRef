@@ -52,20 +52,9 @@ rank_schedule = rank_annealing.optimal_rank_schedule(
 Run and return paired tuples from `X` and `Y` (the bijective Monge assignment between the datasets):
 
 ```python
-import src.HiRef as HiRef
-
-frontier = HiRef.hiref_lr(X, Y, rank_schedule=rank_schedule,
-                    base_rank=1,
-                    iters_per_level = 100,
-                    gamma=40.0,
-                    rescale_cost=False,
-                    return_coupling=False)
-```
-Or, alternatively:
-```python
 import src.HiRef_fast as HiRef
 
-frontier = HiRef..hiref_lr_fast(X, Y, rank_schedule=rank_schedule,
+frontier = HiRef.hiref_lr_fast(X, Y, rank_schedule=rank_schedule,
                     base_rank=1,
                     iters_per_level = 100,
                     gamma=40.0,
